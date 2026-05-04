@@ -1,0 +1,17 @@
+Admin Control (Diamond Packages)
+Admin Dashboard ကနေ Diamond Package တွေကို Create/Update လုပ်တဲ့အခါ DiamondPackage table ထဲမှာ 
+Data တွေ သိမ်းသွားမှာပါ။ Admin က စျေးနှုန်းပြောင်းလဲလိုက်ရင် နောက်ပိုင်းဝယ်မယ့်သူတွေအတွက်ပဲ သက်ရောက်မှုရှိမှာဖြစ်ပါတယ်။
+2. User Order Flow
+Selection: User က Screen မှာ Admin တင်ထားတဲ့ Package တွေကို မြင်ရမယ်။
+Checkout: User က Package တစ်ခုကို ရွေးပြီး ငွေလွှဲ Screenshot ကို Upload တင်မယ်။
+Order Creation: Prisma ကနေ Order table ထဲကို Data အသစ်တစ်ခု ဆောက်ပေးလိုက်မယ်။ 
+အဲ့ဒီမှာ Default အနေနဲ့ status: PENDING ဖြစ်နေပါလိမ့်မယ်။
+3. Admin Approval Process
+Monitoring: Admin Dashboard ရဲ့ Order List မှာ PENDING ဖြစ်နေတဲ့ Order တွေကို Fetch လုပ်ပြီး ပြပေးရပါမယ်။
+ (အဲ့ဒီမှာ User ရဲ့ Screenshot နဲ့ ဘယ် Package ကို ဝယ်ထားလဲဆိုတာ ပါဝင်နေမယ်)
+Action: Admin က ငွေလွှဲတာ မှန်ကန်တယ်ဆိုရင် update query   သုံးပြီး status ကို DONE လို့ ပြောင်းပေးလိုက်ရုံပါပဲ။
+နည်းပညာအကြံပြုချက်
+Image Storage: ငွေလွှဲ Screenshot တွေကို Database ထဲမှာ တိုက်ရိုက်မသိမ်းဘဲ 
+Cloudinary သို့မဟုတ် Uploadthing လိုမျိုး Service တစ်ခုခုသုံးပြီး URL ကိုပဲ Database ထဲမှာ သိမ်းဖို့ အကြံပြုချင်ပါတယ်။
+Security: Admin Dashboard ကို Role အပေါ်မူတည်ပြီး ကာကွယ်ထားဖို့ (Middleware သုံးဖို့)
+ မမေ့ပါနဲ့။ Role က ADMIN ဖြစ်မှသာ Package တွေကို ပြင်ဆင်ခွင့် ပေးရပါမယ်။
