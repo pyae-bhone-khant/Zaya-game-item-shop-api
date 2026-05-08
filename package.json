@@ -8,7 +8,7 @@
     "dev:node": "nodemon --exec tsx src/index.ts",
     "work": "nodemon --exec tsx src/jobs/workers/imageWorker.ts",
     "cache": "nodemon --exec tsx src/jobs/workers/cacheWorker.ts",
-    "build": "tsc -p . && copy dist\\src\\index.js dist\\index.js",
+    "build": "tsc -p . && copy dist\\src\\index.js dist\\index.js && powershell -Command \"(Get-Content dist\\index.js) -replace '../lib/auth', './lib/auth' -replace '../route/admin.js', './route/admin.js' | Set-Content dist\\index.js\"",
     "start": "node dist/src/index.js"
   },
   "keywords": [],
