@@ -4,7 +4,7 @@ exports.auth = void 0;
 const better_auth_1 = require("better-auth");
 const prisma_1 = require("better-auth/adapters/prisma");
 // If your Prisma file is located elsewhere, you can change the path
-const client_1 = require("../generated/prisma/client");
+const client_1 = require("../prisma/generated/prisma/client");
 const prisma = new client_1.PrismaClient();
 exports.auth = (0, better_auth_1.betterAuth)({
     baseURL: "http://localhost:8000",
