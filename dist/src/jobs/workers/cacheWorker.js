@@ -1,5 +1,4 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 // Cache Worker - Placeholder implementation
 console.log('Cache worker started');
 // Add your cache management logic here

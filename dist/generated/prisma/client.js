@@ -49,13 +49,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Prisma = exports.PrismaClient = exports.$Enums = void 0;
 const process = __importStar(require("node:process"));
 const path = __importStar(require("node:path"));
-const node_url_1 = require("node:url");
-globalThis['__dirname'] = path.dirname((0, node_url_1.fileURLToPath)(import.meta.url));
-const $Class = __importStar(require("./internal/class.js"));
-const Prisma = __importStar(require("./internal/prismaNamespace.js"));
+const $Class = __importStar(require("./internal/class"));
+const Prisma = __importStar(require("./internal/prismaNamespace"));
 exports.Prisma = Prisma;
-exports.$Enums = __importStar(require("./enums.js"));
-__exportStar(require("./enums.js"), exports);
+exports.$Enums = __importStar(require("./enums"));
+__exportStar(require("./enums"), exports);
 /**
  * ## Prisma Client
  *
@@ -73,4 +71,7 @@ exports.PrismaClient = $Class.getPrismaClientClass(__dirname);
 // file annotations for bundling tools to include these files
 path.join(__dirname, "query_engine-windows.dll.node");
 path.join(process.cwd(), "generated/prisma/query_engine-windows.dll.node");
+// file annotations for bundling tools to include these files
+path.join(__dirname, "libquery_engine-debian-openssl-3.0.x.so.node");
+path.join(process.cwd(), "generated/prisma/libquery_engine-debian-openssl-3.0.x.so.node");
 //# sourceMappingURL=client.js.map

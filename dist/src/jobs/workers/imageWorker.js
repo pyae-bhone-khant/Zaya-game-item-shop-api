@@ -1,5 +1,4 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 // Image Worker - Placeholder implementation
 console.log('Image worker started');
 // Add your image processing logic here

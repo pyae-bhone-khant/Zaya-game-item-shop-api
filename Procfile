@@ -1,1 +1,1 @@
-web: node dist/src/index.js
+web: node --input-type=module dist/src/index.js
