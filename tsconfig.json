@@ -14,5 +14,5 @@
     "noImplicitAny": true /* Enable error reporting for expressions and declarations with an implied 'any' type. */,
     "skipLibCheck": true /* Skip type checking all .d.ts files. */
   },
-  "include": ["./*.ts", "./*.js", "lib/**/*.ts", "generated/**/*.ts"]
+  "include": ["./*.ts", "./*.js", "src/**/*.ts", "lib/**/*.ts", "generated/**/*.ts"]
 }
