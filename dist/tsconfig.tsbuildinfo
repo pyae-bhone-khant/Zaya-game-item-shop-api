@@ -1,0 +1,1 @@
+{"root":["../prisma.config.ts","../src/index.ts","../src/jobs/workers/cacheworker.ts","../src/jobs/workers/imageworker.ts","../lib/auth.ts","../lib/prisma.ts"],"version":"5.9.3"}
