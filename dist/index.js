@@ -7,8 +7,8 @@ require("dotenv/config");
 const express_1 = __importDefault(require("express"));
 const node_1 = require("better-auth/node");
 const cors_1 = __importDefault(require("cors"));
-const auth_1 = require("./lib/auth");
-const admin_js_1 = __importDefault(require("./route/admin.js"));
+const auth_1 = require("../lib/auth");
+const admin_js_1 = __importDefault(require("../route/admin.js"));
 const app = (0, express_1.default)();
 app.use((0, cors_1.default)({
     origin: "http://localhost:3000",
