@@ -15,3 +15,14 @@ Image Storage: ငွေလွှဲ Screenshot တွေကို Database ထ�
 Cloudinary သို့မဟုတ် Uploadthing လိုမျိုး Service တစ်ခုခုသုံးပြီး URL ကိုပဲ Database ထဲမှာ သိမ်းဖို့ အကြံပြုချင်ပါတယ်။
 Security: Admin Dashboard ကို Role အပေါ်မူတည်ပြီး ကာကွယ်ထားဖို့ (Middleware သုံးဖို့)
  မမေ့ပါနဲ့။ Role က ADMIN ဖြစ်မှသာ Package တွေကို ပြင်ဆင်ခွင့် ပေးရပါမယ်။
+
+
+ "scripts": {
+  "test": "jest",
+  "dev": "npm-run-all --parallel dev:node work cache",
+  "dev:node": "nodemon --exec tsx src/index.ts",
+  "work": "nodemon --exec tsx src/jobs/workers/imageWorker.ts",
+  "cache": "nodemon --exec tsx src/jobs/workers/cacheWorker.ts",
+  "build": "tsc --build", 
+  "start": "node dist/src/index.js"
+}

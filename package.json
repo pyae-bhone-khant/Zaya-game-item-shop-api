@@ -2,15 +2,16 @@
   "name": "furniture-backend",
   "version": "1.0.0",
   "main": "dist/src/index.js",
+
   "scripts": {
-    "test": "jest",
-    "dev": "npm-run-all --parallel dev:node work cache",
-    "dev:node": "nodemon --exec tsx src/index.ts",
-    "work": "nodemon --exec tsx src/jobs/workers/imageWorker.ts",
-    "cache": "nodemon --exec tsx src/jobs/workers/cacheWorker.ts",
-    "build": "tsc --build && npm run dev && npm install",
-    "start": "node dist/index.js"
-  },
+  "test": "jest",
+  "dev": "npm-run-all --parallel dev:node work cache",
+  "dev:node": "nodemon --exec tsx src/index.ts",
+  "work": "nodemon --exec tsx src/jobs/workers/imageWorker.ts",
+  "cache": "nodemon --exec tsx src/jobs/workers/cacheWorker.ts",
+  "build": "tsc --build", 
+  "start": "node dist/src/index.js"
+},
   "keywords": [],
   "author": "Phone Nyo",
   "license": "ISC",
