@@ -5,6 +5,8 @@ import cors from "cors";
 import { auth } from "../lib/auth";
 import type { Request, Response, NextFunction } from "express";
 import adminRoute from "../route/admin.js"
+import userRoute from "../route/user/user.js"
+import "./jobs/workers/imageWorker"
 
 const app = express();
 app.use(cors({
@@ -12,8 +14,11 @@ app.use(cors({
   credentials: true
 }));
 app.use(express.json());
+app.use(express.static("public"));
+app.use(express.static("uploads"));
 app.use("/api/auth", toNodeHandler(auth));
 app.use("/api/admin", adminRoute);
+app.use("/api/user", userRoute);
 
 app.use((error: any, req: Request, res: Response, next: NextFunction) => {
   const status = error.status || 500;

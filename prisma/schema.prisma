@@ -1,33 +1,31 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client"
   output   = "./generated/prisma"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
   directUrl = env("DIRECT_DATABASE_URL")
 }
 
 model User {
-  id            String    @id
+  id            String    @id @default(cuid()) // Added default ID generation
   name          String
-  email         String    
+  email         String    @unique
   emailVerified Boolean   @default(false)
   image         String?
+  role          Role      @default(USER)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+  
+  // Relations
   sessions      Session[]
   accounts      Account[]
-  role          Role      @default(USER)
   orders        Order[]
-  @@unique([email])
+  posts         Post[]
+  products      Product[] // Favorite or owned products
+
   @@map("user")
 }
 
@@ -37,23 +35,22 @@ enum Role {
 }
 
 model Session {
-  id        String   @id
+  id        String   @id @default(cuid())
   expiresAt DateTime
-  token     String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  token     String   @unique
   ipAddress String?
   userAgent String?
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  @@unique([token])
   @@index([userId])
   @@map("session")
 }
 
 model Account {
-  id                    String    @id
+  id                    String    @id @default(cuid())
   accountId             String
   providerId            String
   userId                String
@@ -73,7 +70,7 @@ model Account {
 }
 
 model Verification {
-  id         String   @id
+  id         String   @id @default(cuid())
   identifier String
   value      String
   expiresAt  DateTime
@@ -84,30 +81,106 @@ model Verification {
   @@map("verification")
 }
 
-model DiamondPackage {
-  id           String   @id @default(cuid())
-  diemondCount Int
-  price        Float
-  isActive     Boolean  @default(true)
-  orders       Order[]
-  updatedAt    DateTime @updatedAt
+model Category {
+  id       Int       @id @default(autoincrement())
+  name     String    @unique @db.VarChar(52)
+  posts    Post[]
+  products Product[]
 }
 
 model Order {
-  id        String   @id @default(cuid())
-  userId    String
-  user      User     @relation(fields: [userId], references: [id])
-  packageId String
-  package   DiamondPackage @relation(fields: [packageId], references: [id])
-  paymentPhoto  String
-  status    String   @default("PENDING")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         Int                @id @default(autoincrement())
+  userId     String             // Fixed: Changed from Int to String to match User.id
+  code       String             @db.VarChar(15)
+  totalPrice Decimal            @db.Decimal(10, 2)
+  createdAt  DateTime           @default(now())
+  updatedAt  DateTime           @updatedAt
+  user       User               @relation(fields: [userId], references: [id])
+  products   ProductsOnOrders[]
 }
 
-enum OrderStatus {
-  PENDING
-  COMPLETED
-  CANCELLED
+model Post {
+  id         Int       @id @default(autoincrement())
+  title      String    @db.VarChar(255)
+  content    String
+  body       String
+  image      String
+  authorId   String    // Fixed: Changed from Int to String
+  categoryId Int
+  typeId     Int
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  author     User      @relation(fields: [authorId], references: [id])
+  category   Category  @relation(fields: [categoryId], references: [id])
+  type       Type      @relation(fields: [typeId], references: [id])
+  tags       PostTag[]
 }
 
+model Product {
+  id          Int                @id @default(autoincrement())
+  name        String             @db.VarChar(255)
+  description String
+  price       Decimal            @db.Decimal(10, 2)
+  discount    Decimal            @default(0) @db.Decimal(10, 2)
+  rating      Int                @default(0) @db.SmallInt
+  inventory   Int                @default(0)
+  status      Status             @default(ACTIVE)
+  categoryId  Int
+  typeId      Int
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+  category    Category           @relation(fields: [categoryId], references: [id])
+  type        Type               @relation(fields: [typeId], references: [id])
+  orders      ProductsOnOrders[]
+  images      Image[]
+  tags        ProductTag[]
+  users       User[]             // Implicit many-to-many for "Favorites"
+}
+
+model ProductsOnOrders {
+  id        Int     @id @default(autoincrement())
+  orderId   Int
+  productId Int
+  quantity  Int     @db.SmallInt
+  price     Decimal @db.Decimal(10, 2) // Snapshots price at time of order
+  order     Order   @relation(fields: [orderId], references: [id])
+  product   Product @relation(fields: [productId], references: [id])
+}
+
+model PostTag {
+  id    Int    @id @default(autoincrement())
+  name  String @unique @db.VarChar(52)
+  posts Post[]
+}
+
+model ProductTag {
+  id       Int       @id @default(autoincrement())
+  name     String    @unique @db.VarChar(52)
+  products Product[]
+}
+
+model Type {
+  id       Int       @id @default(autoincrement())
+  name     String    @unique @db.VarChar(52)
+  posts    Post[]
+  products Product[]
+}
+
+model Image {
+  id        Int     @id @default(autoincrement())
+  path      String  @db.VarChar(255)
+  productId Int
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+}
+
+enum Status {
+  ACTIVE
+  INACTIVE
+  FREEZE
+}
+
+model Setting {
+  id    Int    @id @default(autoincrement())
+  key   String @unique @db.VarChar(50)
+  value String @db.VarChar(200)
+}
