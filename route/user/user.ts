@@ -10,7 +10,4 @@ router.patch("/profile/upload", AuthMiddleware, upload.single("avatar") , upload
 router.patch("/profile/upload/multiple", AuthMiddleware, upload.array("avatar") , uploadProfileMultiple );
 router.patch("/profile/upload/optimized", AuthMiddleware, upload.single("avatar") , uploadProfileOptimized );
 
-
-
-
 export default router;
