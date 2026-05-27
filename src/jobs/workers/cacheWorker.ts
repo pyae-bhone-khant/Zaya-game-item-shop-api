@@ -1,37 +1,77 @@
-// import { Worker } from "bullmq";
-// import Redis from "ioredis";
+import { Worker } from "bullmq";
+// import { redis } from "../../../config/redisClient";
+import Redis from "ioredis";
 
-// const redis = new Redis({
-//   host: process.env.REDIS_HOST || "localhost",
-//   port: parseInt(process.env.REDIS_PORT || "6379"),
-// });
+export const redis = new Redis({
+  host: process.env.REDIS_HOST || "127.0.0.1",
+  port: Number(process.env.REDIS_PORT) || 6379,
+  // Add password if needed: password: process.env.REDIS_PASSWORD,
+});
 
-// const cacheWorker = new Worker("cache-invalidation", async (job) => {
-//  const {pattern} = job.data;
-//  await redis.del(pattern);
-// },
-// {
-//  connection: {
-//   host: process.env.REDIS_HOST || "localhost",
-//   port: parseInt(process.env.REDIS_PORT || "6379"),
-//  },
-//  concurrency: 5,
-// });
+export const caheWorker = new Worker(
+  "cache-invalidation",
+  async (job) => {
+    const { pattern } = job.data;
+    await invalidateCache(pattern);
+  },
+  {
+    //connection: redis,
+    connection: {
+      host: process.env.REDIS_HOST || "172.0.0.1",
+      port: Number(process.env.REDIS_PORT!) || 6379,
+    },
+    concurrency: 5, // Proccess 5 jobs concurrently
+  },
+);
 
-// cacheWorker.on('error', (error) => {
-//   console.error('Cache worker error:', error);
-// });
+caheWorker.on("completed", (job) => {
+  console.log(`Job completed with result ${job.id}`);
+});
 
-// cacheWorker.on('completed', (job) => {
-//   console.log('Cache job completed:', job.id);
-// });
+caheWorker.on("failed", (job: any, err) => {
+  console.log(`Job ${job.id} failed with ${err.message}`);
+});
 
-// cacheWorker.on('failed', (job, error) => {
-//   console.error('Cache job failed:', job?.id, error);
-// });
+const invalidateCache = async (pattern: string) => {
+  try {
+    const stream = redis.scanStream({
+      match: pattern, // "products:*"
+      count: 100,
+    });
 
-// console.log('Cache worker started');
+    const pipeline = redis.pipeline();
+    let totalKeys = 0;
 
-// export default cacheWorker;
+    // Process keys in batches
+    stream.on("data", (keys: string[]) => {
+      if (keys.length > 0) {
+        keys.forEach((key) => {
+          pipeline.del(key);
+          totalKeys++;
+        });
+      }
+    });
 
+    // Wrap stream events in a Promise
+    await new Promise<void>((resolve, reject) => {
+      stream.on("end", async () => {
+        try {
+          if (totalKeys > 0) {
+            await pipeline.exec();
+            console.log(`Invalidated ${totalKeys} keys`);
+          }
+          resolve();
+        } catch (execError) {
+          reject(execError);
+        }
+      });
 
+      stream.on("error", (error) => {
+        reject(error);
+      });
+    });
+  } catch (error) {
+    console.error("Cache Invalidation error: ", error);
+    throw error;
+  }
+};
